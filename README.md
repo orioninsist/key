@@ -2,6 +2,8 @@
 
 > Terminal-first personal knowledge system centered around AstroNvim. Markdown remains an important format, but the current workflow is file-format agnostic for opening, creating, searching text content, and renaming files.
 
+> **Scope:** This repository is a public reference and helper-tool collection for working with local knowledge files. It is **not** the personal note archive, not a standalone software product, and not the published Orioninsist blog. The actual personal notes remain local and are not published or synced here.
+
 ## Core Idea
 
 Knowledge is organized under one flat root. All Knowledge files live directly in the root directory; the current setup does not use PARA subfolders.
@@ -28,7 +30,7 @@ Review
 /home/murat/Media/8-Document/Knowledge
 ```
 
-All notes, diagrams, documents, drawings, and publication files live directly in this single root.
+Personal notes and working files live in this local root. The GitHub repository documents helper tools and workflows; it does not publish the contents of the local root.
 
 ## Repository Structure
 
@@ -120,7 +122,7 @@ Esc
 updated render returns automatically
 ```
 
-The Markdown file always remains the source of truth. Rendered images are generated for preview only; source code stays copyable and editable.
+The local Markdown file always remains the source of truth. Rendered images are generated for preview only; source code stays copyable and editable.
 
 ### Embedded Mermaid
 
@@ -517,12 +519,15 @@ Their responsibilities are:
 
 Mermaid rendering is handled through the Snacks document rendering path already active in AstroNvim.
 
-## Git Workflow
+## Git Workflow (helper repository only)
+
+Only review, commit, and push changes to helper scripts or this README. Never stage or publish local private notes as part of this repository.
 
 ```bash
 git status
-git add .
-git commit -m "update notes"
+git add README.md bin/
+git commit -m "docs: update knowledge reference tools"
+git push
 ```
 
 ```bash
