@@ -1,20 +1,30 @@
 {
-  "version": "1.1",
-  "typography": {
-    "font_family": "auto",
-    "preferred": [
-      "Noto Sans",
-      "Liberation Sans",
-      "DejaVu Sans"
-    ],
-    "fallback": "Typst default"
-  },
-  "render": {
-    "png_ppi": 144,
-    "output_dir": "output",
-    "templates": {
-      "one_page_v1": "templates/one_page_v1.typ",
-      "one_page_compact_v1": "templates/one_page_compact_v1.typ"
+  "version": "2.0",
+  "image_templates": {
+    "instagram_story": {
+      "file": "templates/social_image.typ",
+      "width": 1080,
+      "height": 1920
+    },
+    "instagram_post": {
+      "file": "templates/social_image.typ",
+      "width": 1080,
+      "height": 1350
+    },
+    "instagram_square": {
+      "file": "templates/social_image.typ",
+      "width": 1080,
+      "height": 1080
+    },
+    "pinterest_pin": {
+      "file": "templates/social_image.typ",
+      "width": 1000,
+      "height": 1500
+    },
+    "landscape_4_3": {
+      "file": "templates/social_image.typ",
+      "width": 1200,
+      "height": 900
     }
   }
 }
