@@ -6,3 +6,6 @@
 /orioninsist-typst-pilot/
 /.venv/
 __pycache__/
+
+# Generated files
+output/
