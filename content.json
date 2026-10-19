@@ -1,0 +1,17 @@
+{
+  "title": "Work Smarter.",
+  "subtitle": "Digital Production",
+  "description": "One content file. Reusable templates. Pixel-accurate images.",
+  "footer": "ORIONINSIST",
+  "variants": {
+    "instagram_story": {
+      "title": "Create Once. Publish Everywhere."
+    },
+    "instagram_post": {
+      "title": "Create Once."
+    },
+    "pinterest_pin": {
+      "title": "Publish Everywhere."
+    }
+  }
+}
