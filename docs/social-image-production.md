@@ -153,3 +153,56 @@ PNG generation is implemented. PDF, slides, and video are **not yet implemented*
 The old `schemas/content.schema.json` is retained only as a legacy PDF-era file and is not used by the PNG workflow.
 
 The near-term goal is to keep the JSON-driven PNG workflow simple, predictable, and reusable.
+
+## 11. Docker and Docker Compose
+
+The PNG renderer can run inside a Linux container without installing Python,
+uv, or Typst on the host computer. This is useful on Fedora and Windows
+with Docker Desktop.
+
+### Build the image
+
+Run from the repository root:
+
+```bash
+docker compose build png-renderer
+```
+
+### Render the default Instagram Story
+
+```bash
+docker compose run --rm --no-deps png-renderer
+```
+
+This uses `content/work-smarter.json` and the `instagram_story` preset
+defined in `compose.yaml`.
+
+### Render another preset
+
+```bash
+docker compose run --rm --no-deps png-renderer content/work-smarter.json instagram_square --format png
+```
+
+Replace the JSON path and preset name as needed. The JSON file must be
+included in the Docker image; rebuild the image after changing source
+content, templates, configuration, or renderer code.
+
+### Output files
+
+Generated PNGs appear in the host's `output/` directory through a
+Docker bind mount. They are excluded from Git.
+
+On Fedora, the `:Z` mount option provides the SELinux label needed for
+container access. Docker Desktop on Windows runs Linux containers and
+uses the same Compose configuration.
+
+The renderer is a one-off job, not a persistent web service. It opens
+no network ports and is separate from the FreshRSS Compose project.
+
+### Current Docker limitations
+
+The image currently targets Linux AMD64. The Docker build downloads
+Typst 0.15.0 and installs the Python dependencies from `uv.lock`.
+
+Only PNG production is implemented. PDF, slides, video, and GUI-based
+production tools will require separate implementation and testing.
