@@ -48,6 +48,9 @@ def main():
     if not shutil.which("typst"):
         print("ERROR=Typst executable not found", file=sys.stderr)
         return 3
+    if not shutil.which("pdfinfo"):
+        print("ERROR=pdfinfo executable not found", file=sys.stderr)
+        return 3
     config = load_json(ROOT / "config/production.json")
     templates = config["render"]["templates"]
     selected = [args.template] if args.template else list(templates)
@@ -81,6 +84,22 @@ def main():
             if ext == "pdf":
                 if not b.startswith(b"%PDF-") or len(b) < 100:
                     raise ValueError(f"Invalid PDF: {destination}")
+                info = subprocess.run(
+                    ["pdfinfo", str(destination)],
+                    capture_output=True, text=True, check=True
+                ).stdout
+                pages = next(
+                    (int(line.split(":", 1)[1].strip())
+                     for line in info.splitlines()
+                     if line.startswith("Pages:")),
+                    None
+                )
+                if pages != 1:
+                    destination.unlink()
+                    print(f"PAGE_COUNT=FAIL template={name} pages={pages}", flush=True)
+                    print(f"INVALID_PDF_REMOVED={destination.name}", flush=True)
+                    raise ValueError(f"Expected exactly one PDF page: {destination}")
+                print(f"PAGE_COUNT=PASS template={name} pages=1", flush=True)
                 print(f"PDF=PASS template={name} bytes={len(b)}", flush=True)
             else:
                 if not b.startswith(b"\x89PNG\r\n\x1a\n") or len(b) < 24:

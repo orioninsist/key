@@ -1,11 +1,8 @@
 #let doc = json(sys.inputs.content)
 #let c = doc.content
 #set page(paper: "a4", margin: (x: 22mm, y: 22mm), footer: context [#align(right)[#text(size: 8pt, fill: rgb("#64748b"))[#c.footer]]])
-#if sys.inputs.at("font", default: "") != "" {
-  set text(font: sys.inputs.font, size: 10pt, fill: rgb("#172033"))
-} else {
-  set text(size: 10pt, fill: rgb("#172033"))
-}
+#let selected-font = sys.inputs.at("font", default: "Libertinus Serif")
+#set text(font: selected-font, size: 10pt, fill: rgb("#172033"))
 #set par(leading: 0.7em)
 #rect(width: 100%, height: 4pt, fill: rgb("#1b4f91"))
 #v(18mm)
