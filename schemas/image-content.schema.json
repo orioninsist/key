@@ -21,6 +21,30 @@
     },
     "footer": {
       "type": "string"
+    },
+    "variants": {
+      "type": "object",
+      "description": "Optional overrides keyed by registered template name",
+      "additionalProperties": {
+        "type": "object",
+        "minProperties": 1,
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "subtitle": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "footer": {
+            "type": "string"
+          }
+        }
+      }
     }
   }
 }
