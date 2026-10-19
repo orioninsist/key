@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0.0",
+  "type": "one_page",
+  "template": "one_page_v1",
+  "content": {
+    "title": "ORIONINSIST",
+    "subtitle": "Work Smarter. Prove It.",
+    "lead": "One source. Reusable templates. Verifiable outputs.",
+    "sections": [
+      {"heading": "Input", "body": "Content lives in validated JSON, independent from presentation."},
+      {"heading": "Render", "body": "Typst applies a reusable one-page template to the structured content."},
+      {"heading": "Verify", "body": "The pipeline checks output files, dimensions, and PDF integrity."}
+    ],
+    "footer": "ORIONINSIST | Digital Production"
+  },
+  "settings": {"language": "en", "page": "a4"}
+}

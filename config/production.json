@@ -1,0 +1,20 @@
+{
+  "version": "1.1",
+  "typography": {
+    "font_family": "auto",
+    "preferred": [
+      "Noto Sans",
+      "Liberation Sans",
+      "DejaVu Sans"
+    ],
+    "fallback": "Typst default"
+  },
+  "render": {
+    "png_ppi": 144,
+    "output_dir": "output",
+    "templates": {
+      "one_page_v1": "templates/one_page_v1.typ",
+      "one_page_compact_v1": "templates/one_page_compact_v1.typ"
+    }
+  }
+}

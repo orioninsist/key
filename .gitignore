@@ -1,0 +1,8 @@
+
+# ORIONINSIST production — local/generated files
+/output/
+/.integration-backup/
+/orioninsist-production-v1/
+/orioninsist-typst-pilot/
+/.venv/
+__pycache__/
