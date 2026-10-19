@@ -1,0 +1,8 @@
+services:
+  png-renderer:
+    volumes:
+      - ./render.py:/app/render.py:ro,z
+      - ./content:/app/content:ro,z
+      - ./config:/app/config:ro,z
+      - ./schemas:/app/schemas:ro,z
+      - ./templates:/app/templates:ro,z

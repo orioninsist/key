@@ -206,3 +206,32 @@ Typst 0.15.0 and installs the Python dependencies from `uv.lock`.
 
 Only PNG production is implemented. PDF, slides, video, and GUI-based
 production tools will require separate implementation and testing.
+
+## 12. Docker development mode
+
+For active development, use both Compose files:
+
+```bash
+docker compose -f compose.yaml -f compose.dev.yaml run --rm --no-deps png-renderer
+```
+
+The development override mounts the host's renderer, JSON content,
+configuration, schemas, and Typst templates as read-only inputs.
+Changes to these files are available on the next container run
+without rebuilding the image.
+
+To choose another JSON file or preset:
+
+```bash
+docker compose -f compose.yaml -f compose.dev.yaml run --rm --no-deps png-renderer content/work-smarter.json instagram_square --format png
+```
+
+The JSON file must exist under the mounted `content/` directory.
+Generated images are written to the host's `output/` directory.
+
+Rebuild the image when Python dependencies, Typst, fonts, or the
+Dockerfile change. Source-only changes do not require a rebuild.
+
+The development configuration is in `compose.dev.yaml`.
+The standard `compose.yaml` remains suitable for reproducible
+image-based production.
