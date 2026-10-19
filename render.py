@@ -39,6 +39,10 @@ def render_image(content_file, template_name, output, format_name):
     errors = sorted(Draft202012Validator(schema).iter_errors(data), key=lambda e: str(list(e.path)))
     if errors:
         raise ValueError("; ".join(f"{'/'.join(map(str,e.path))}: {e.message}" for e in errors))
+    # Resolve only the selected template's text overrides; other templates stay unchanged.
+    overrides = data.get("variants", {}).get(template_name, {})
+    resolved = {key: data[key] for key in ("title", "subtitle", "description", "footer")}
+    resolved.update(overrides)
     if not shutil.which("typst"):
         raise ValueError("Typst CLI not found (check: typst --version)")
     target = (ROOT / template["file"]).resolve()
@@ -50,7 +54,7 @@ def render_image(content_file, template_name, output, format_name):
     with tempfile.TemporaryDirectory(prefix=".orion-", dir=ROOT) as temp:
         tmp = Path(temp)
         json_path = tmp / "content.json"
-        json_path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+        json_path.write_text(json.dumps(resolved, ensure_ascii=False), encoding="utf-8")
         staged = tmp / "image.png"
         cmd = ["typst", "compile", "--root", str(ROOT),
                "--input", "content=/" + json_path.relative_to(ROOT).as_posix(),
