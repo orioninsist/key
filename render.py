@@ -42,7 +42,18 @@ def render_image(content_file, template_name, output, format_name):
     # Resolve only the selected template's text overrides; other templates stay unchanged.
     overrides = data.get("variants", {}).get(template_name, {})
     resolved = {key: data[key] for key in ("title", "subtitle", "description", "footer")}
+    resolved.update({
+        key: data[key]
+        for key in ("category", "image", "source")
+        if key in data
+    })
     resolved.update(overrides)
+    if resolved.get("image"):
+        image_path = (ROOT / resolved["image"]).resolve()
+        assets_root = (ROOT / "assets").resolve()
+        if not image_path.is_relative_to(assets_root) or not image_path.is_file():
+            raise ValueError("Image must exist inside assets/")
+        resolved["image"] = "/" + image_path.relative_to(ROOT).as_posix()
     if not shutil.which("typst"):
         raise ValueError("Typst CLI not found (check: typst --version)")
     target = (ROOT / template["file"]).resolve()

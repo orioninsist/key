@@ -1,0 +1,17 @@
+{
+  "title": "Bir Kez Üret. Her Yerde Paylaş.",
+  "subtitle": "DİJİTAL ÜRETİM",
+  "description": "Tek bir içerikten Instagram ve Pinterest için farklı görseller üret.",
+  "footer": "ORIONINSIST",
+  "variants": {
+    "instagram_post": {
+      "title": "Bir Kez Üret. Her Yerde Paylaş."
+    },
+    "pinterest_pin": {
+      "title": "İçerik Üretimini Otomatikleştir."
+    }
+  },
+  "category": "YAPAY ZEKÂ",
+  "source": "ORIONINSIST",
+  "image": "assets/test-image.png"
+}

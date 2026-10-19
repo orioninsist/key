@@ -6,3 +6,4 @@ services:
       - ./config:/app/config:ro,z
       - ./schemas:/app/schemas:ro,z
       - ./templates:/app/templates:ro,z
+      - ./assets:/app/assets:ro,z

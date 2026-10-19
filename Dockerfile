@@ -28,6 +28,7 @@ COPY config/ ./config/
 COPY content/ ./content/
 COPY schemas/ ./schemas/
 COPY templates/ ./templates/
+COPY assets/ ./assets/
 
 ENV PATH="/app/.venv/bin:${PATH}"
 

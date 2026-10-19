@@ -42,9 +42,27 @@
           },
           "footer": {
             "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
           }
         }
       }
+    },
+    "category": {
+      "type": "string"
+    },
+    "image": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
     }
   }
 }
