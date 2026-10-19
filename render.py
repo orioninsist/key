@@ -1,119 +1,85 @@
 #!/usr/bin/env python3
-"""ORIONINSIST: one content contract, central config, multiple Typst templates."""
+"""ORIONINSIST: uv run render.py content.json instagram_story [--format png]."""
 import argparse
 import json
 import shutil
 import struct
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 
 
-def load_json(path):
+def load(path):
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def choose_font(config, data, override):
-    requested = override or data.get("settings", {}).get("font_family") or config["typography"]["font_family"]
-    fonts = subprocess.run(["typst", "fonts"], capture_output=True, text=True, check=True).stdout
-    available = {line.split(":", 1)[0].strip().casefold(): line.split(":", 1)[0].strip()
-                 for line in fonts.splitlines() if line.strip()}
-    if requested != "auto":
-        if requested.casefold() not in available:
-            raise ValueError(f"Font unavailable: {requested}. Check 'typst fonts'.")
-        return available[requested.casefold()]
-    return next((available[x.casefold()] for x in config["typography"]["preferred"]
-                 if x.casefold() in available), "")
+def render_image(content_file, template_name, output, format_name):
+    if format_name != "png":
+        raise ValueError("Only PNG is implemented. PDF, slide and video are future formats.")
+    from jsonschema import Draft202012Validator
+
+    source = content_file.resolve()
+    data = load(source)
+    if not isinstance(data, dict):
+        raise ValueError("Content JSON must be an object")
+    config = load(ROOT / "config/production.json")
+    presets = config["image_templates"]
+    if template_name not in presets:
+        raise ValueError("Unknown image template: " + template_name + ". Available: " + ", ".join(presets))
+    template = presets[template_name]
+    if not isinstance(template, dict):
+        raise ValueError("Invalid template configuration")
+    width, height = int(template["width"]), int(template["height"])
+    if not (1 <= width <= 10000 and 1 <= height <= 10000):
+        raise ValueError("Invalid image dimensions")
+    schema = load(ROOT / "schemas/image-content.schema.json")
+    errors = sorted(Draft202012Validator(schema).iter_errors(data), key=lambda e: str(list(e.path)))
+    if errors:
+        raise ValueError("; ".join(f"{'/'.join(map(str,e.path))}: {e.message}" for e in errors))
+    if not shutil.which("typst"):
+        raise ValueError("Typst CLI not found (check: typst --version)")
+    target = (ROOT / template["file"]).resolve()
+    if not target.is_relative_to(ROOT) or not target.is_file():
+        raise ValueError("Unsafe or missing image template")
+    output.mkdir(parents=True, exist_ok=True)
+    dest = output / (template_name + ".png")
+    # Typst sizes use points; at 72 PPI the dimensions equal exact pixel values.
+    with tempfile.TemporaryDirectory(prefix=".orion-", dir=ROOT) as temp:
+        tmp = Path(temp)
+        json_path = tmp / "content.json"
+        json_path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+        staged = tmp / "image.png"
+        cmd = ["typst", "compile", "--root", str(ROOT),
+               "--input", "content=/" + json_path.relative_to(ROOT).as_posix(),
+               "--input", f"width={width}", "--input", f"height={height}",
+               str(target), str(staged), "--ppi", "72"]
+        subprocess.run(cmd, check=True)
+        raw = staged.read_bytes()
+        if not raw.startswith(b"\x89PNG\r\n\x1a\n") or len(raw) < 24:
+            raise ValueError("Invalid PNG output")
+        actual = struct.unpack(">II", raw[16:24])
+        if actual != (width, height):
+            raise ValueError(f"Wrong PNG dimensions: {actual} expected {(width, height)}")
+        shutil.copy2(staged, dest)
+    print(f"PNG=PASS template={template_name} size={width}x{height} output={dest}")
+    return 0
 
 
 def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--content", type=Path, default=ROOT / "examples/content.json")
-    ap.add_argument("--output", type=Path)
-    ap.add_argument("--font")
-    ap.add_argument("--template", choices=["one_page_v1", "one_page_compact_v1"],
-                    help="Render only this template; default renders every configured template")
-    args = ap.parse_args()
-    from jsonschema import Draft202012Validator
-    data = load_json(args.content)
-    schema = load_json(ROOT / "schemas/content.schema.json")
-    errors = sorted(Draft202012Validator(schema).iter_errors(data), key=lambda e: list(map(str, e.path)))
-    if errors:
-        for error in errors:
-            print(f"SCHEMA=FAIL path={'/'.join(map(str, error.path))} reason={error.message}", file=sys.stderr)
-        return 2
-    print("SCHEMA=PASS", flush=True)
-    if not shutil.which("typst"):
-        print("ERROR=Typst executable not found", file=sys.stderr)
-        return 3
-    if not shutil.which("pdfinfo"):
-        print("ERROR=pdfinfo executable not found", file=sys.stderr)
-        return 3
-    config = load_json(ROOT / "config/production.json")
-    templates = config["render"]["templates"]
-    selected = [args.template] if args.template else list(templates)
-    font = choose_font(config, data, args.font)
-    print(f"FONT={font or 'Typst default'}", flush=True)
-    content = args.content.resolve()
-    try:
-        content_ref = "/" + content.relative_to(ROOT.resolve()).as_posix()
-    except ValueError:
-        print("ERROR=Content must be within the production root", file=sys.stderr)
-        return 4
-    output_dir = args.output or ROOT / config["render"]["output_dir"]
-    output_dir.mkdir(parents=True, exist_ok=True)
-    ppi = int(config["render"]["png_ppi"])
-    if ppi < 36 or ppi > 600:
-        raise ValueError("png_ppi must be between 36 and 600")
-    for name in selected:
-        if name not in templates:
-            raise ValueError(f"Unknown template: {name}")
-        template = (ROOT / templates[name]).resolve()
-        if not template.is_relative_to(ROOT.resolve()) or not template.is_file():
-            raise ValueError(f"Missing or unsafe template: {name}")
-        for ext in ("pdf", "png"):
-            destination = output_dir / f"{name}.{ext}"
-            cmd = ["typst", "compile", "--root", str(ROOT), "--input", f"content={content_ref}",
-                   "--input", f"font={font}", str(template), str(destination)]
-            if ext == "png":
-                cmd += ["--ppi", str(ppi)]
-            subprocess.run(cmd, check=True)
-            b = destination.read_bytes()
-            if ext == "pdf":
-                if not b.startswith(b"%PDF-") or len(b) < 100:
-                    raise ValueError(f"Invalid PDF: {destination}")
-                info = subprocess.run(
-                    ["pdfinfo", str(destination)],
-                    capture_output=True, text=True, check=True
-                ).stdout
-                pages = next(
-                    (int(line.split(":", 1)[1].strip())
-                     for line in info.splitlines()
-                     if line.startswith("Pages:")),
-                    None
-                )
-                if pages != 1:
-                    destination.unlink()
-                    print(f"PAGE_COUNT=FAIL template={name} pages={pages}", flush=True)
-                    print(f"INVALID_PDF_REMOVED={destination.name}", flush=True)
-                    raise ValueError(f"Expected exactly one PDF page: {destination}")
-                print(f"PAGE_COUNT=PASS template={name} pages=1", flush=True)
-                print(f"PDF=PASS template={name} bytes={len(b)}", flush=True)
-            else:
-                if not b.startswith(b"\x89PNG\r\n\x1a\n") or len(b) < 24:
-                    raise ValueError(f"Invalid PNG: {destination}")
-                w, h = struct.unpack(">II", b[16:24])
-                if not 0 < w <= 20000 or not 0 < h <= 20000:
-                    raise ValueError(f"Invalid PNG dimensions: {destination}")
-                print(f"PNG=PASS template={name} bytes={len(b)} size={w}x{h}", flush=True)
-    print(f"RENDER=PASS templates={len(selected)} files={len(selected)*2} output={output_dir}")
-    return 0
+    parser = argparse.ArgumentParser(description="Render content JSON with a named image template")
+    parser.add_argument("content", type=Path, help="Path to JSON data (content.json)")
+    parser.add_argument("template", help="Named template, e.g. instagram_story")
+    parser.add_argument("--format", choices=["png", "pdf", "slide", "video"], default="png")
+    parser.add_argument("--output", type=Path, default=ROOT / "output")
+    args = parser.parse_args()
+    return render_image(args.content, args.template, args.output.resolve(), args.format)
 
 
 if __name__ == "__main__":
     try:
         sys.exit(main())
-    except (ValueError, OSError, subprocess.CalledProcessError) as e:
-        sys.exit(f"RENDER=FAIL {e}")
+    except (ValueError, OSError, json.JSONDecodeError, subprocess.CalledProcessError) as exc:
+        sys.exit(f"RENDER=FAIL {exc}")
