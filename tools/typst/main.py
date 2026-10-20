@@ -33,7 +33,7 @@ def main():
     target = output / f"{args.content}-{args.template}.{args.format}"
     command = [
         "docker", "run", "--rm",
-        "-v", f"{ROOT}:/app", "-w", "/app",
+        "-v", f"{ROOT}:/app:Z", "-w", "/app",
     ]
     if hasattr(os, "getuid"):
         command += ["--user", f"{os.getuid()}:{os.getgid()}"]
