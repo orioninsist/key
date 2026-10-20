@@ -1,45 +1,47 @@
 #!/usr/bin/env python3
-"""Select content + template; render via the official Typst Docker image."""
+"""Render JSON content with a Typst template in the official Docker image."""
 import argparse
 import json
-import subprocess
+import os
 from pathlib import Path
+import subprocess
 
 ROOT = Path(__file__).resolve().parent
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Render Typst templates from JSON using Docker")
-    parser.add_argument("--content", default="post", help="JSON name under content/ (without .json)")
-    parser.add_argument("--template", default="post", help="Typst name under templates/ (without .typ)")
+    parser = argparse.ArgumentParser(description="Render JSON via native Typst in Docker")
+    parser.add_argument("--content", default="post", help="content/<name>.json")
+    parser.add_argument("--template", default="post", help="templates/<name>.typ")
     parser.add_argument("--format", choices=("png", "pdf"), default="png")
     args = parser.parse_args()
 
     for value in (args.content, args.template):
         if not value or Path(value).name != value or value in (".", ".."):
-            parser.error("content and template must be simple file names")
+            parser.error("Names must be simple filenames without paths")
     source = ROOT / "content" / (args.content + ".json")
     template = ROOT / "templates" / (args.template + ".typ")
     if not source.is_file() or not template.is_file():
-        parser.error(f"missing source: {source if not source.is_file() else template}")
+        parser.error(f"Missing file: {source if not source.is_file() else template}")
     try:
         json.loads(source.read_text(encoding="utf-8"))
     except (ValueError, UnicodeError) as exc:
-        parser.error(f"invalid JSON: {exc}")
-
-    # Typst templates load ../content/post.json; for other content names we pass
-    # the chosen JSON as an explicit CLI input and decode it in the template.
-    # Keep post.typ and the default JSON path as an immediately usable first example.
-    if args.content != "post":
-        parser.error("The starter post.typ template currently reads content/post.json; use --content post")
+        parser.error(f"Invalid JSON: {exc}")
 
     output = ROOT / "output"
     output.mkdir(exist_ok=True)
     target = output / f"{args.content}-{args.template}.{args.format}"
     command = [
-        "docker", "run", "--rm", "--user", f"{__import__('os').getuid()}:{__import__('os').getgid()}",
-        "-v", f"{ROOT}:/app", "-w", "/app", "ghcr.io/typst/typst:latest",
-        "compile", f"templates/{args.template}.typ", f"output/{target.name}",
+        "docker", "run", "--rm",
+        "-v", f"{ROOT}:/app", "-w", "/app",
+    ]
+    if hasattr(os, "getuid"):
+        command += ["--user", f"{os.getuid()}:{os.getgid()}"]
+    command += [
+        "ghcr.io/typst/typst:latest", "compile",
+        "--root", "/app",
+        "--input", f"content=../content/{args.content}.json",
+        f"templates/{args.template}.typ", f"output/{target.name}",
     ]
     if args.format == "png":
         command += ["--ppi", "300"]
