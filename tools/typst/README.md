@@ -34,7 +34,7 @@ For the first command create `content/announcement.json` first. Templates load t
 
 ```bash
 mkdir -p output
-docker run --rm -v "$PWD:/app" -w /app ghcr.io/typst/typst:latest compile --root /app --input content=../content/post.json templates/post.typ output/post.png --ppi 300
+docker run --rm -v "$PWD:/app" -w /app ghcr.io/typst/typst:latest compile --root /app --input content=/content/post.json templates/post.typ output/post.png --ppi 300
 ```
 
 ## Dockerfile
