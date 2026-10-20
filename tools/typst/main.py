@@ -40,7 +40,7 @@ def main():
     command += [
         "ghcr.io/typst/typst:latest", "compile",
         "--root", "/app",
-        "--input", f"content=../content/{args.content}.json",
+        "--input", f"content=/content/{args.content}.json",
         f"templates/{args.template}.typ", f"output/{target.name}",
     ]
     if args.format == "png":
