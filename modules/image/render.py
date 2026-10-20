@@ -9,7 +9,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
+MODULE_ROOT = Path(__file__).resolve().parent
+ROOT = MODULE_ROOT.parent.parent
 
 
 def load(path):
@@ -25,7 +26,7 @@ def render_image(content_file, template_name, output, format_name):
     data = load(source)
     if not isinstance(data, dict):
         raise ValueError("Content JSON must be an object")
-    config = load(ROOT / "config/production.json")
+    config = load(MODULE_ROOT / "config/production.json")
     presets = config["image_templates"]
     if template_name not in presets:
         raise ValueError("Unknown image template: " + template_name + ". Available: " + ", ".join(presets))
@@ -35,7 +36,7 @@ def render_image(content_file, template_name, output, format_name):
     width, height = int(template["width"]), int(template["height"])
     if not (1 <= width <= 10000 and 1 <= height <= 10000):
         raise ValueError("Invalid image dimensions")
-    schema = load(ROOT / "schemas/image-content.schema.json")
+    schema = load(MODULE_ROOT / "schemas/image-content.schema.json")
     errors = sorted(Draft202012Validator(schema).iter_errors(data), key=lambda e: str(list(e.path)))
     if errors:
         raise ValueError("; ".join(f"{'/'.join(map(str,e.path))}: {e.message}" for e in errors))
@@ -56,8 +57,8 @@ def render_image(content_file, template_name, output, format_name):
         resolved["image"] = "/" + image_path.relative_to(ROOT).as_posix()
     if not shutil.which("typst"):
         raise ValueError("Typst CLI not found (check: typst --version)")
-    target = (ROOT / template["file"]).resolve()
-    if not target.is_relative_to(ROOT) or not target.is_file():
+    target = (MODULE_ROOT / template["file"]).resolve()
+    if not target.is_relative_to(MODULE_ROOT) or not target.is_file():
         raise ValueError("Unsafe or missing image template")
     output.mkdir(parents=True, exist_ok=True)
     dest = output / (template_name + ".png")
