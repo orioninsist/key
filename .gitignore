@@ -1,11 +1,14 @@
-
-# ORIONINSIST production — local/generated files
-/output/
-/.integration-backup/
-/orioninsist-production-v1/
-/orioninsist-typst-pilot/
-/.venv/
-__pycache__/
-
-# Generated files
+# Local and generated files
 output/
+**/output/
+.DS_Store
+*.swp
+*.swo
+*.bak
+
+# Local environments
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/

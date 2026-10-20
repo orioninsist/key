@@ -1,5 +1,0 @@
-[project]
-name = "orioninsist-digital-production"
-version = "0.1.0"
-requires-python = ">=3.11"
-dependencies = ["jsonschema>=4.20,<5"]
