@@ -1,4 +1,4 @@
-#let veri = json(sys.inputs.at("content", default: "../content/post.json"))
+#let veri = json(sys.inputs.at("content", default: "/content/post.json"))
 #set page(width: 259.2pt, height: 259.2pt, margin: 18pt, fill: rgb("#0d1117"))
 #set text(fill: white, size: 12pt)
 
