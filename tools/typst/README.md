@@ -1,13 +1,10 @@
-# Typst — native Docker rendering
+# Typst — JSON + template + native Docker CLI
 
-Official documentation: https://typst.app/docs/  
-Official source and Docker image: https://github.com/typst/typst and `ghcr.io/typst/typst`
+[Official source](https://github.com/typst/typst) · [Official documentation](https://typst.app/docs/) · [JSON API](https://typst.app/docs/reference/data-loading/json/) · [PNG output](https://typst.app/docs/reference/png/)
 
-## Requirements
-- Docker Engine / Docker CLI (daemon must be running)
-- Python 3 (standard library only; runs on Fedora host)
+## Requirements and verification (Fedora)
 
-## Verify installation
+Docker Engine/CLI with a running Docker daemon, and Python 3 (standard library only) on the host. Docker runs the official Typst image. Python is **not** required inside the image.
 
 ```bash
 docker version
@@ -15,33 +12,35 @@ docker run --rm ghcr.io/typst/typst:latest --version
 python3 --version
 ```
 
-## Render
-
-From this folder:
+## Produce an image with one command
 
 ```bash
+cd tools/typst
 python3 main.py
-python3 main.py --format pdf
 ```
 
-Output goes to the ignored `output/` folder. To change the post, edit `content/post.json`. The template is `templates/post.typ`.
+Output: `output/post-post.png` (1080 × 1080 pixels, from a 259.2pt square at 300 PPI).
 
-The starter example produces a 259.2 pt square page at 300 PPI = 1080 × 1080 px. The same template can be exported to PDF. `--ppi` controls PNG resolution, not the document's layout dimensions.
-
-Direct native CLI alternative, without Python:
+Other content with the **same JSON keys** (`kategori`, `baslik`, `icerik`, `tarih`):
 
 ```bash
-docker run --rm -v "$PWD:/app" -w /app ghcr.io/typst/typst:latest compile templates/post.typ output/post.png --ppi 300
+python3 main.py --content announcement --template post --format png
+python3 main.py --content post --template post --format pdf
 ```
 
-`Dockerfile` records the official image-based runtime; no Docker build is required for this basic workflow. Docker runs the official CLI as its entrypoint. The host's Python script invokes Docker; it is not installed inside the image.
+For the first command create `content/announcement.json` first. Templates load the selected content through native Typst `sys.inputs` and `json`. The script validates input JSON, calls the Docker CLI, and checks the result. No extra Python libraries are needed. Generated files belong in the git-ignored `output/` directory.
 
-## Limitations / next steps
-- This initial `post.typ` intentionally loads `content/post.json`; arbitrary content-file selection is not enabled yet.
-- The illustration presumes a locally available DejaVu Sans font; check actual fonts with `docker run --rm ghcr.io/typst/typst:latest fonts` and adjust if necessary.
-- Test the rendering on the local Docker daemon before declaring installation verified. GitHub source updates alone cannot prove Docker runs on Fedora.
+## Direct CLI (optional)
 
-CLI: https://github.com/typst/typst  
-JSON: https://typst.app/docs/reference/data-loading/json/  
-PNG: https://typst.app/docs/reference/png/  
-Page: https://typst.app/docs/reference/layout/page/
+```bash
+mkdir -p output
+docker run --rm -v "$PWD:/app" -w /app ghcr.io/typst/typst:latest compile --root /app --input content=../content/post.json templates/post.typ output/post.png --ppi 300
+```
+
+## Dockerfile
+
+`Dockerfile` identifies the official Typst image as this workspace's native runtime. No custom image build is required in the basic workflow. The official image already exposes the Typst CLI as its entrypoint.
+
+## Verification boundary
+
+Source files have been added to GitHub, but Docker execution and PNG dimension checks must run on your Fedora system or CI to confirm end-to-end behavior. The exact resolved `latest` version can change; pin an image digest after the first successful verification for repeatable builds.
