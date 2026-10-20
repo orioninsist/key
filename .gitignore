@@ -12,3 +12,6 @@ output/
 !.env.example
 .venv/
 __pycache__/
+
+# Generated Typst outputs
+/tools/typst/output/
