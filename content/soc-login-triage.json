@@ -1,0 +1,25 @@
+{
+  "title": "Login Success After 20 Failures?",
+  "subtitle": "SOC Tier 1: Don't Guess.",
+  "description": "Check the source IP, device, MFA result and user activity before deciding whether to escalate.",
+  "footer": "ORIONINSIST",
+  "category": "SOC TRIAGE",
+  "source": "ORIONINSIST | Training scenario",
+  "variants": {
+    "instagram_story": {
+      "title": "20 Failed Logins. Then Success.",
+      "subtitle": "Attack or forgotten password?",
+      "description": "Check IP, device, MFA and user activity. Escalate suspicious evidence—not assumptions."
+    },
+    "instagram_post": {
+      "title": "20 Failures. 1 Success.",
+      "subtitle": "Compromise? Not proven.",
+      "description": "Verify source IP, device, MFA and user activity before making the SOC escalation decision."
+    },
+    "pinterest_pin": {
+      "title": "Failed Logins → Success",
+      "subtitle": "A SOC Analyst's First Check",
+      "description": "IP • Device • MFA • User activity. A successful login alone does not prove compromise."
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "title": "Bir Kez Üret. Her Yerde Paylaş.",
+  "subtitle": "YAPAY ZEKÂ & OTOMASYON",
+  "description": "Tek bir içerik kaynağından farklı platformlara uygun görseller oluştur. Daha az tekrar, daha tutarlı üretim.",
+  "footer": "ORIONINSIST",
+  "variants": {
+    "instagram_post": {
+      "title": "Bir Kez Üret. Her Yerde Paylaş."
+    },
+    "instagram_story": {
+      "title": "İçerik Üretimini Otomatikleştir."
+    },
+    "instagram_square": {
+      "title": "Tek İçerik. Çoklu Platform."
+    },
+    "pinterest_pin": {
+      "title": "Daha Akıllı İçerik Üretimi."
+    }
+  }
+}
