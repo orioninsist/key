@@ -1,46 +1,64 @@
-# Typst — JSON + template + native Docker CLI
+# Typst ile Görsel ve PDF Üretimi
 
-[Official source](https://github.com/typst/typst) · [Official documentation](https://typst.app/docs/) · [JSON API](https://typst.app/docs/reference/data-loading/json/) · [PNG output](https://typst.app/docs/reference/png/)
+Bu klasör, JSON içeriğini Typst şablonuyla birleştirerek PNG görsel veya PDF üretir. İşlem Docker içinde çalışır; bilgisayara ayrıca Typst kurmanız gerekmez.
 
-## Requirements and verification (Fedora)
+## Gerekenler
 
-Docker Engine/CLI with a running Docker daemon, and Python 3 (standard library only) on the host. Docker runs the official Typst image. Python is **not** required inside the image.
+Bilgisayarda **Docker** (çalışır durumda) ve **Python 3** olmalıdır.
 
-```bash
-docker version
-docker run --rm ghcr.io/typst/typst:latest --version
-python3 --version
-```
+## Hızlı başlangıç
 
-## Produce an image with one command
+Terminali projenin ana klasöründe açın ve sırayla çalıştırın:
 
 ```bash
 cd tools/typst
 python3 main.py
 ```
 
-Output: `output/post-post.png` (1080 × 1080 pixels, from a 259.2pt square at 300 PPI).
+- `cd tools/typst`: Typst klasörüne geçer.
+- `python3 main.py`: Örnek JSON içeriğinden PNG görsel üretir.
 
-Other content with the **same JSON keys** (`kategori`, `baslik`, `icerik`, `tarih`):
+**Sonuç:** `output/post-post.png` (1080 × 1080 piksel).
 
-```bash
-python3 main.py --content announcement --template post --format png
-python3 main.py --content post --template post --format pdf
-```
-
-For the first command create `content/announcement.json` first. Templates load the selected content through native Typst `sys.inputs` and `json`. The script validates input JSON, calls the Docker CLI, and checks the result. No extra Python libraries are needed. Generated files belong in the git-ignored `output/` directory.
-
-## Direct CLI (optional)
+## PDF üretmek
 
 ```bash
-mkdir -p output
-docker run --rm -v "$PWD:/app" -w /app ghcr.io/typst/typst:latest compile --root /app --input content=/content/post.json templates/post.typ output/post.png --ppi 300
+python3 main.py --format pdf
 ```
 
-## Dockerfile
+**Sonuç:** `output/post-post.pdf`.
 
-`Dockerfile` identifies the official Typst image as this workspace's native runtime. No custom image build is required in the basic workflow. The official image already exposes the Typst CLI as its entrypoint.
+## İçeriği değiştirmek
 
-## Verification boundary
+`content/post.json` dosyasını düzenleyin. Alanlar:
 
-Source files have been added to GitHub, but Docker execution and PNG dimension checks must run on your Fedora system or CI to confirm end-to-end behavior. The exact resolved `latest` version can change; pin an image digest after the first successful verification for repeatable builds.
+- `kategori`: Üst başlık
+- `baslik`: Ana başlık
+- `icerik`: Açıklama metni
+- `tarih`: Görseldeki tarih
+
+Ardından `python3 main.py` komutunu tekrar çalıştırın.
+
+## Dosyalar ne işe yarar?
+
+| Dosya / klasör | Görevi |
+| --- | --- |
+| `content/` | Yazıların bulunduğu JSON dosyaları |
+| `templates/` | Görselin tasarımını belirleyen Typst şablonları |
+| `main.py` | Üretimi başlatan Python programı |
+| `Dockerfile` | Typst için Docker çalışma ortamı tanımı |
+| `output/` | Üretilen PNG ve PDF dosyaları |
+
+## Başka bir içerik kullanmak
+
+Önce `content/announcement.json` dosyasını `post.json` ile aynı alanları kullanarak oluşturun. Ardından:
+
+```bash
+python3 main.py --content announcement
+```
+
+**Sonuç:** `output/announcement-post.png`.
+
+**Not:** İlk çalıştırmada Docker, Typst imajını indirebilir. Üretim için Docker'ın açık olması gerekir. Çıktılar `output/` klasörüne kaydedilir.
+
+[Typst belgeleri](https://typst.app/docs/) · [Typst kaynak kodu](https://github.com/typst/typst)
