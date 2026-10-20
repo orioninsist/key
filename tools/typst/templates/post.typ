@@ -1,6 +1,6 @@
-#let veri = json("../content/post.json")
+#let veri = json(sys.inputs.at("content", default: "../content/post.json"))
 #set page(width: 259.2pt, height: 259.2pt, margin: 18pt, fill: rgb("#0d1117"))
-#set text(font: "DejaVu Sans", fill: white, size: 12pt)
+#set text(fill: white, size: 12pt)
 
 #v(1fr)
 #text(size: 9pt, fill: rgb("#58a6ff"), weight: "bold")[#upper(veri.kategori)]
