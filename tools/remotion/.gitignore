@@ -3,3 +3,8 @@ output/
 .cache/
 *.log
 .env
+
+# Local media assets: keep folder structure in Git, not media files
+public/**
+!public/*/
+!public/*/.gitkeep
