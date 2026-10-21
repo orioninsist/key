@@ -1,0 +1,19 @@
+{
+  "name": "orioninsist-remotion",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "render": "remotion render templates/basic/index.ts BasicVideo output/video.mp4 --props=content/content.json --codec=h264 --concurrency=2"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.536",
+    "remotion": "4.0.536",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0"
+  }
+}
