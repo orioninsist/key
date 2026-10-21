@@ -3,21 +3,59 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
-TEMPLATE="${1:-basic}"
-CONTENT="${2:-content/content.json}"
+# templates/ altındaki geçerli şablonları keşfet
+mapfile -t TEMPLATES < <(
+  find templates -mindepth 2 -maxdepth 2 -name index.ts -type f |
+  sed -E 's@^templates/([^/]+)/index.ts$@\1@' | sort
+)
 
-case "$TEMPLATE" in
-  basic)
-    COMPOSITION="BasicVideo"
-    ;;
-  showcase)
-    COMPOSITION="ShowcaseVideo"
-    ;;
-  *)
-    echo "HATA: Bilinmeyen şablon: $TEMPLATE"
+if [ "${#TEMPLATES[@]}" -eq 0 ]; then
+  echo "HATA: Şablon bulunamadı."
+  exit 1
+fi
+
+TEMPLATE="${1:-}"
+CONTENT="${2:-}"
+
+if [ -z "$TEMPLATE" ]; then
+  echo "Şablon seç:"
+  select TEMPLATE in "${TEMPLATES[@]}"; do
+    [ -n "$TEMPLATE" ] && break
+    echo "Geçersiz seçim."
+  done
+fi
+
+if [[ ! " ${TEMPLATES[*]} " =~ " ${TEMPLATE} " ]]; then
+  echo "HATA: Bilinmeyen şablon: $TEMPLATE"
+  exit 1
+fi
+
+# Şablonun Composition ID değerini Root.tsx içinden oku
+ROOT="templates/$TEMPLATE/Root.tsx"
+if [ ! -f "$ROOT" ]; then
+  echo "HATA: Root.tsx bulunamadı: $ROOT"
+  exit 1
+fi
+
+COMPOSITION="$(sed -nE 's/.*id="([^"]+)".*/\1/p' "$ROOT" | head -n 1)"
+
+if [ -z "$COMPOSITION" ]; then
+  echo "HATA: Composition ID bulunamadı: $ROOT"
+  exit 1
+fi
+
+if [ -z "$CONTENT" ]; then
+  mapfile -t CONTENTS < <(find content -type f -name '*.json' | sort)
+  if [ "${#CONTENTS[@]}" -eq 0 ]; then
+    echo "HATA: JSON içeriği bulunamadı."
     exit 1
-    ;;
-esac
+  fi
+  echo "İçerik seç:"
+  select CONTENT in "${CONTENTS[@]}"; do
+    [ -n "$CONTENT" ] && break
+    echo "Geçersiz seçim."
+  done
+fi
 
 if [ ! -f "$CONTENT" ]; then
   echo "HATA: JSON dosyası bulunamadı: $CONTENT"
