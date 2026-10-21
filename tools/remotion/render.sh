@@ -15,6 +15,7 @@ docker run --rm \
   -e HOME=/tmp \
   -v "$(pwd)/content:/app/content:ro,Z" \
   -v "$(pwd)/templates:/app/templates:ro,Z" \
+  -v "$(pwd)/public:/app/public:ro,Z" \
   -v "$(pwd)/output:/app/output:Z" \
   orioninsist-remotion
 
