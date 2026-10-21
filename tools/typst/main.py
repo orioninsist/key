@@ -38,7 +38,7 @@ def main():
     if hasattr(os, "getuid"):
         command += ["--user", f"{os.getuid()}:{os.getgid()}"]
     command += [
-        "ghcr.io/typst/typst:latest", "compile",
+        "ghcr.io/typst/typst:latest", "compile", "--font-path", "/app/fonts",
         "--root", "/app",
         "--input", f"content=/content/{args.content}.json",
         f"templates/{args.template}.typ", f"output/{target.name}",
