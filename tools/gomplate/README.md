@@ -40,3 +40,18 @@ The generated file is `output/example.md`. Docker downloads the official image a
 To use a different JSON file or template, change the corresponding paths in the command.
 
 **Workflow:** JSON + Template → Gomplate → Markdown
+
+## Interactive CLI
+
+Requirements: Bash, fzf, and Docker.
+
+From the `tools/gomplate` directory, load the command into your current shell:
+
+```bash
+source ./gomplate.sh
+gomplate
+```
+
+Use the arrow keys and Enter to select a JSON file from `content/`, then a template from `templates/`. The selected JSON filename determines the Markdown output path (`output/<name>.md`).
+
+Run `source ./gomplate.sh` again in each new shell session. The selection interface runs in Bash with fzf; Gomplate itself runs only in Docker.
