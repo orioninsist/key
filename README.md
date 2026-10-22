@@ -4,7 +4,6 @@ Fedora Linux araçları, terminal uygulamaları, yapılandırmaları ve doğrula
 
 ## Bağlantılar
 
-- [Teknik belge dizini](docs/index.md)
 - [Araçlar ve kaynaklar (Markdown)](tools-and-resources.md)
 - [XLSX → Markdown dönüştürme scripti](xlsx-to-md.sh)
 - [Google Sheets — Ana takip tablosu](https://docs.google.com/spreadsheets/d/1UvxeOACEU39FUg_yxQBjBMXOD9l3IN3RzekUlw3sjlk/edit)
