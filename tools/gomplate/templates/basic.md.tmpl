@@ -1,0 +1,12 @@
+{{ $data := (ds "content") -}}
+# {{ $data.title }}
+
+{{ $data.description }}
+
+**Yazar:** {{ $data.author }}
+
+## Maddeler
+
+{{ range $data.items -}}
+- {{ . }}
+{{ end }}

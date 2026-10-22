@@ -1,0 +1,10 @@
+{
+  "title": "Gomplate İlk Test",
+  "description": "JSON verisinden Markdown üretimi",
+  "author": "orioninsist",
+  "items": [
+    "Docker çalışıyor",
+    "Gomplate 5.3.0 hazır",
+    "Markdown çıktısı üretilecek"
+  ]
+}
