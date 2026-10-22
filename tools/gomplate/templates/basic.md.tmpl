@@ -1,12 +1,40 @@
-{{ $data := (ds "content") -}}
+{{- $data := ds "content" -}}
 # {{ $data.title }}
 
 {{ $data.description }}
 
-**Yazar:** {{ $data.author }}
+**Author:** {{ $data.author }}
 
-## Maddeler
+{{ range $data.sections -}}
+## {{ .title }}
 
-{{ range $data.items -}}
+{{ .body }}
+
+{{ end -}}
+## Features
+
+{{ range $data.features -}}
 - {{ . }}
 {{ end }}
+## Tasks
+
+{{ range $data.tasks -}}
+- [{{ if .done }}x{{ else }} {{ end }}] {{ .name }}
+{{ end }}
+## Resources
+
+{{ range $data.links -}}
+- [{{ .name }}]({{ .url }})
+{{ end }}
+## Compatibility
+
+| Feature | Status |
+| --- | --- |
+{{ range $data.table -}}
+| {{ .feature }} | {{ .status }} |
+{{ end }}
+## Code Example
+
+~~~{{ $data.code.language }}
+{{ $data.code.content }}
+~~~
