@@ -4,7 +4,11 @@ Render Markdown from JSON using the official Gomplate Docker image. No host inst
 
 ## Requirements
 
-- Docker Engine
+- [Docker Engine](https://docs.docker.com/engine/install/) — runs the official Gomplate image.
+- [Bash](https://www.gnu.org/software/bash/) — loads the interactive shell function.
+- [fzf](https://github.com/junegunn/fzf) — selects JSON and template files in the terminal.
+
+Bash and fzf are required for the interactive CLI only; direct Docker rendering requires only Docker.
 
 ## Quick start
 
