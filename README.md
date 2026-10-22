@@ -1,24 +1,26 @@
 # Key
 
-Fedora Linux araçları, terminal uygulamaları, yapılandırmaları ve doğrulanmış çözümler için Markdown tabanlı teknik bilgi arşivi.
+A Markdown-based technical knowledge base documenting Fedora Linux tools, terminal applications, configurations, troubleshooting, and verified solutions.
 
-## Bağlantılar
+## Links
 
-- [Araçlar ve kaynaklar (Markdown)](tools-and-resources.md)
-- [XLSX → Markdown dönüştürme scripti](xlsx-to-md.sh)
-- [Google Sheets — Ana takip tablosu](https://docs.google.com/spreadsheets/d/1UvxeOACEU39FUg_yxQBjBMXOD9l3IN3RzekUlw3sjlk/edit)
-- [GitHub deposu](https://github.com/orioninsist/key)
+- [Tools and Resources](tools-and-resources.md)
+- [XLSX to Markdown Conversion Script](xlsx-to-md.sh)
+- [Google Sheets — Main Tracking Spreadsheet](https://docs.google.com/spreadsheets/d/1UvxeOACEU39FUg_yxQBjBMXOD9l3IN3RzekUlw3sjlk/edit)
+- [GitHub Repository](https://github.com/orioninsist/key)
 
-## Araç listesini güncelleme
+## Update the Tools List
 
-Google Sheets, araç listesinin ana kaynağıdır. Güncel tabloyu **Microsoft Excel (.xlsx)** biçiminde indirip bu deponun kök dizinine `Key.xlsx` adıyla koyun.
+Google Sheets is the source of truth for the tools list. Download the latest spreadsheet as **Microsoft Excel (.xlsx)** and save it as `Key.xlsx` in the repository root.
 
-Fedora Linux üzerinde Bash ve [uv](https://github.com/astral-sh/uv) gereklidir. Script Python bağımlılığı `openpyxl` ile **01 | Tools and Resources** sekmesini ayırır, [Microsoft MarkItDown](https://github.com/microsoft/markitdown) ile Markdown'a dönüştürür ve `tools-and-resources.md` dosyasını yeniler.
+On Fedora Linux, the script requires Bash and [uv](https://github.com/astral-sh/uv). It uses `openpyxl` to isolate the **01 | Tools and Resources** worksheet, then [Microsoft MarkItDown](https://github.com/microsoft/markitdown) to convert it to Markdown and update `tools-and-resources.md`.
+
+Run from the repository root:
 
 ```bash
 ./xlsx-to-md.sh
 ```
 
-Gerekirse çalıştırma izni bir defaya mahsus `chmod +x xlsx-to-md.sh` komutuyla verilebilir.
+If needed, grant executable permission once with `chmod +x xlsx-to-md.sh`.
 
-**Önemli:** Script mevcut `tools-and-resources.md` dosyasını başarılı dönüşümde üzerine yazar; Google Sheets'e veya GitHub'a kendiliğinden veri göndermez. Markdown sonucunu kontrol ettikten sonra ilgili dosyaları ayrıca commit ve push edin. `Key.xlsx` dosyasını GitHub'a eklemek gerekmez.
+**Note:** A successful conversion overwrites the existing `tools-and-resources.md` file. The script does not modify Google Sheets or automatically commit or push changes to GitHub. Review the generated Markdown before committing and pushing the relevant files. There is no need to add `Key.xlsx` to GitHub.
