@@ -31,7 +31,7 @@
 | Feature | Status |
 | --- | --- |
 {{ range $data.table -}}
-| {{ .feature }} | {{ .status }} |
+| {{ .feature | strings.ReplaceAll "|" "\\|" }} | {{ .status | strings.ReplaceAll "|" "\\|" }} |
 {{ end }}
 ## Code Example
 
